@@ -24,7 +24,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imagePicker.allowsEditing = false
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
         if let userPickedImage = info[.originalImage] as? UIImage {
+            
          imageView.image = userPickedImage
             
             guard let ciimage = CIImage(image: userPickedImage) else {fatalError("Could not convert in CIImage")}
@@ -41,7 +43,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let request = VNCoreMLRequest(model: model) { (request, error) in
             
             guard let results = request.results as? [VNClassificationObservation] else {fatalError("Unable to retrieve info")}
-            print(results)
+            
+            if let firstResult = results.first {
+                
+                if firstResult.identifier.contains("hotdog") {
+                    self.navigationItem.title = "HotDog!"
+                    
+                }else {
+                    self.navigationItem.title = "Not HotDog!"
+                }
+            }
+            
         }
         let handler = VNImageRequestHandler(ciImage: image)
         
@@ -51,17 +63,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         catch {
             print(error)
         }
-        
-        
     }
-    
-
     @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
         
         present(imagePicker, animated: true, completion: nil)
-        
-        
     }
-    
 }
 
